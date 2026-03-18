@@ -3,5 +3,5 @@
   publish = "octofit-tracker/frontend/build"
   command = "npm run build"
 
-[build.environment]
-  REACT_APP_API_URL = "http://localhost:8000"
+# Set REACT_APP_API_URL to your deployed backend URL in Netlify environment settings
+# e.g. REACT_APP_API_URL = "https://your-backend-api.example.com"
