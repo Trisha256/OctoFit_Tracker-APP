@@ -1,0 +1,27 @@
+.App {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.navbar-brand img {
+  border-radius: 50%;
+}
+
+.navbar .nav-link.active {
+  font-weight: bold;
+  color: #fff !important;
+  text-decoration: underline;
+}
+
+.container {
+  padding-top: 20px;
+}
+
+h2 {
+  color: #343a40;
+}
+
+.table thead {
+  background-color: #343a40;
+  color: white;
+}
