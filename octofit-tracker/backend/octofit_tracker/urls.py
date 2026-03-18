@@ -7,9 +7,9 @@ from .views import api_root
 
 codespace_name = os.environ.get('CODESPACE_NAME')
 if codespace_name:
-    base_url = f"https://{codespace_name}-8000.app.github.dev"
+    base_url = f"https://{codespace_name}-8000.app.github.dev"  # noqa: F841
 else:
-    base_url = "http://localhost:8000"
+    base_url = "http://localhost:8000"  # noqa: F841
 
 router = DefaultRouter()
 router.register(r'users', views.UserViewSet)

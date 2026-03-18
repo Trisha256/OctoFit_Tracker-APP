@@ -3,7 +3,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-octofit-tracker-secret-key-for-development-only'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-octofit-tracker-secret-key-for-development-only')
 
 DEBUG = True
 
@@ -69,8 +69,6 @@ CORS_ALLOWED_ORIGINS = [
 ]
 if os.environ.get('CODESPACE_NAME'):
     CORS_ALLOWED_ORIGINS.append(f"https://{os.environ.get('CODESPACE_NAME')}-3000.app.github.dev")
-
-CORS_ALLOW_ALL_ORIGINS = True
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
