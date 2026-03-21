@@ -1,12 +1,19 @@
+body {
+  background-color: #f8f9fa;
+}
+
 .App {
   min-height: 100vh;
-  background-color: #f8f9fa;
 }
 
 .navbar-brand img {
   border-radius: 50%;
 }
 
+@media (max-width: 768px) {
+  .display-4 {
+    font-size: 2rem;
+  }
 .navbar .nav-link.active {
   font-weight: bold;
   color: #fff !important;

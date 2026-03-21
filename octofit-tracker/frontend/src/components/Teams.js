@@ -1,54 +1,58 @@
 import React, { useState, useEffect } from 'react';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 function Teams() {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const codespaceName = process.env.REACT_APP_CODESPACE_NAME;
-  const apiUrl = codespaceName
-    ? `https://${codespaceName}-8000.app.github.dev/api/teams/`
-    : 'http://localhost:8000/api/teams/';
-
   useEffect(() => {
-    console.log('Fetching teams from:', apiUrl);
-    fetch(apiUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Teams data:', data);
-        const results = Array.isArray(data) ? data : data.results || [];
-        setTeams(results);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching teams:', err);
-        setError(err.message);
-        setLoading(false);
-      });
-  }, [apiUrl]);
+    fetch(`${API_URL}/api/teams/`)
+      .then(res => res.json())
+      .then(data => { setTeams(data); setLoading(false); })
+      .catch(err => { setError(err.message); setLoading(false); });
+  }, []);
 
-  if (loading) return <div className="container mt-4"><p>Loading teams...</p></div>;
-  if (error) return <div className="container mt-4"><p className="text-danger">Error: {error}</p></div>;
+  if (loading) return <div className="text-center py-5"><div className="spinner-border" role="status"></div></div>;
+  if (error) return <div className="alert alert-danger">{error}</div>;
 
   return (
-    <div className="container mt-4">
-      <h2 className="mb-4">Teams</h2>
-      <table className="table table-striped table-bordered">
-        <thead className="table-dark">
-          <tr>
-            <th>Team Name</th>
-            <th>Members</th>
-          </tr>
-        </thead>
-        <tbody>
-          {teams.map((team) => (
-            <tr key={team.id}>
-              <td>{team.name}</td>
-              <td>{Array.isArray(team.members) ? team.members.join(', ') : team.members}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="container-fluid">
+      <div className="row">
+        <div className="col-12">
+          <h2 className="mb-4">Teams</h2>
+        </div>
+      </div>
+      <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {teams.map(team => (
+          <div key={team.id} className="col">
+            <div className="card h-100 shadow-sm">
+              <div className="card-header bg-primary text-white">
+                <h5 className="mb-0">👥 {team.name}</h5>
+              </div>
+              <div className="card-body">
+                <h6>Members ({team.members ? team.members.length : 0})</h6>
+                <ul className="list-unstyled mb-0">
+                  {team.members && team.members.map(member => (
+                    <li key={member.id} className="d-flex align-items-center mb-1">
+                      <span className="me-2">👤</span> {member.username}
+                    </li>
+                  ))}
+                  {(!team.members || team.members.length === 0) && (
+                    <li className="text-muted">No members yet</li>
+                  )}
+                </ul>
+              </div>
+            </div>
+          </div>
+        ))}
+        {teams.length === 0 && (
+          <div className="col-12">
+            <p className="text-muted">No teams found.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,56 +1,61 @@
 import React, { useState, useEffect } from 'react';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 function Workouts() {
   const [workouts, setWorkouts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const codespaceName = process.env.REACT_APP_CODESPACE_NAME;
-  const apiUrl = codespaceName
-    ? `https://${codespaceName}-8000.app.github.dev/api/workouts/`
-    : 'http://localhost:8000/api/workouts/';
-
   useEffect(() => {
-    console.log('Fetching workouts from:', apiUrl);
-    fetch(apiUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Workouts data:', data);
-        const results = Array.isArray(data) ? data : data.results || [];
-        setWorkouts(results);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching workouts:', err);
-        setError(err.message);
-        setLoading(false);
-      });
-  }, [apiUrl]);
+    fetch(`${API_URL}/api/workouts/`)
+      .then(res => res.json())
+      .then(data => { setWorkouts(data); setLoading(false); })
+      .catch(err => { setError(err.message); setLoading(false); });
+  }, []);
 
-  if (loading) return <div className="container mt-4"><p>Loading workouts...</p></div>;
-  if (error) return <div className="container mt-4"><p className="text-danger">Error: {error}</p></div>;
+  if (loading) return <div className="text-center py-5"><div className="spinner-border" role="status"></div></div>;
+  if (error) return <div className="alert alert-danger">{error}</div>;
+
+  const difficultyColor = {
+    beginner: 'success',
+    intermediate: 'warning',
+    advanced: 'danger',
+  };
 
   return (
-    <div className="container mt-4">
-      <h2 className="mb-4">Workouts</h2>
-      <table className="table table-striped table-bordered">
-        <thead className="table-dark">
-          <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Duration (min)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {workouts.map((workout) => (
-            <tr key={workout.id}>
-              <td>{workout.name}</td>
-              <td>{workout.description}</td>
-              <td>{workout.duration}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="container-fluid">
+      <div className="row">
+        <div className="col-12">
+          <h2 className="mb-4">💪 Personalized Workouts</h2>
+        </div>
+      </div>
+      <div className="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+        {workouts.map(workout => (
+          <div key={workout.id} className="col">
+            <div className="card h-100 shadow-sm">
+              <div className="card-header d-flex justify-content-between align-items-center">
+                <span className="fw-bold">{workout.name}</span>
+                <span className={`badge bg-${difficultyColor[workout.difficulty] || 'secondary'}`}>
+                  {workout.difficulty}
+                </span>
+              </div>
+              <div className="card-body">
+                <p className="card-text">{workout.description}</p>
+                <div className="d-flex gap-2 flex-wrap">
+                  <span className="badge bg-info text-dark">🏷️ {workout.workout_type}</span>
+                  <span className="badge bg-secondary">⏱️ {workout.duration} min</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+        {workouts.length === 0 && (
+          <div className="col-12">
+            <p className="text-muted">No workouts found.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

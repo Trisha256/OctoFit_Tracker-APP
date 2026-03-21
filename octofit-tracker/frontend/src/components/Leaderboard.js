@@ -1,58 +1,54 @@
 import React, { useState, useEffect } from 'react';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 function Leaderboard() {
-  const [entries, setEntries] = useState([]);
+  const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const codespaceName = process.env.REACT_APP_CODESPACE_NAME;
-  const apiUrl = codespaceName
-    ? `https://${codespaceName}-8000.app.github.dev/api/leaderboard/`
-    : 'http://localhost:8000/api/leaderboard/';
-
   useEffect(() => {
-    console.log('Fetching leaderboard from:', apiUrl);
-    fetch(apiUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Leaderboard data:', data);
-        const results = Array.isArray(data) ? data : data.results || [];
-        setEntries(results);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching leaderboard:', err);
-        setError(err.message);
-        setLoading(false);
-      });
-  }, [apiUrl]);
+    fetch(`${API_URL}/api/leaderboard/`)
+      .then(res => res.json())
+      .then(data => { setLeaderboard(data); setLoading(false); })
+      .catch(err => { setError(err.message); setLoading(false); });
+  }, []);
 
-  if (loading) return <div className="container mt-4"><p>Loading leaderboard...</p></div>;
-  if (error) return <div className="container mt-4"><p className="text-danger">Error: {error}</p></div>;
+  if (loading) return <div className="text-center py-5"><div className="spinner-border" role="status"></div></div>;
+  if (error) return <div className="alert alert-danger">{error}</div>;
 
   return (
-    <div className="container mt-4">
-      <h2 className="mb-4">Leaderboard</h2>
-      <table className="table table-striped table-bordered">
-        <thead className="table-dark">
-          <tr>
-            <th>Rank</th>
-            <th>User</th>
-            <th>Score</th>
-          </tr>
-        </thead>
-        <tbody>
-          {entries
-            .sort((a, b) => b.score - a.score)
-            .map((entry, index) => (
-              <tr key={entry.id}>
-                <td>{index + 1}</td>
-                <td>{entry.user}</td>
-                <td>{entry.score}</td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
+    <div className="container-fluid">
+      <div className="row justify-content-center">
+        <div className="col-12 col-lg-8">
+          <h2 className="mb-4">🏆 Leaderboard</h2>
+          <div className="table-responsive">
+            <table className="table table-striped table-hover">
+              <thead className="table-warning">
+                <tr>
+                  <th>Rank</th>
+                  <th>User</th>
+                  <th>Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leaderboard.sort((a, b) => a.rank - b.rank).map(entry => (
+                  <tr key={entry.id}>
+                    <td>
+                      {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : `#${entry.rank}`}
+                    </td>
+                    <td>{entry.user ? entry.user.username : 'Unknown'}</td>
+                    <td><span className="badge bg-success fs-6">{entry.score}</span></td>
+                  </tr>
+                ))}
+                {leaderboard.length === 0 && (
+                  <tr><td colSpan="3" className="text-center text-muted">No leaderboard data found.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,54 +1,46 @@
 import React, { useState, useEffect } from 'react';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 function Users() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const codespaceName = process.env.REACT_APP_CODESPACE_NAME;
-  const apiUrl = codespaceName
-    ? `https://${codespaceName}-8000.app.github.dev/api/users/`
-    : 'http://localhost:8000/api/users/';
-
   useEffect(() => {
-    console.log('Fetching users from:', apiUrl);
-    fetch(apiUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Users data:', data);
-        const results = Array.isArray(data) ? data : data.results || [];
-        setUsers(results);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching users:', err);
-        setError(err.message);
-        setLoading(false);
-      });
-  }, [apiUrl]);
+    fetch(`${API_URL}/api/users/`)
+      .then(res => res.json())
+      .then(data => { setUsers(data); setLoading(false); })
+      .catch(err => { setError(err.message); setLoading(false); });
+  }, []);
 
-  if (loading) return <div className="container mt-4"><p>Loading users...</p></div>;
-  if (error) return <div className="container mt-4"><p className="text-danger">Error: {error}</p></div>;
+  if (loading) return <div className="text-center py-5"><div className="spinner-border" role="status"></div></div>;
+  if (error) return <div className="alert alert-danger">{error}</div>;
 
   return (
-    <div className="container mt-4">
-      <h2 className="mb-4">Users</h2>
-      <table className="table table-striped table-bordered">
-        <thead className="table-dark">
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user.id}>
-              <td>{user.name}</td>
-              <td>{user.email}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="container-fluid">
+      <div className="row">
+        <div className="col-12">
+          <h2 className="mb-4">Users</h2>
+        </div>
+      </div>
+      <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {users.map(user => (
+          <div key={user.id} className="col">
+            <div className="card h-100 shadow-sm">
+              <div className="card-body">
+                <h5 className="card-title">👤 {user.username}</h5>
+                <p className="card-text text-muted">{user.email}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+        {users.length === 0 && (
+          <div className="col-12">
+            <p className="text-muted">No users found.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
