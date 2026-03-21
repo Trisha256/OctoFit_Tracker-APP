@@ -7,6 +7,12 @@ import Leaderboard from './components/Leaderboard';
 import Workouts from './components/Workouts';
 import logo from './logo.png';
 import './App.css';
+import './App.css';
+import Activities from './components/Activities';
+import Leaderboard from './components/Leaderboard';
+import Teams from './components/Teams';
+import Users from './components/Users';
+import Workouts from './components/Workouts';
 
 function App() {
   return (
@@ -14,8 +20,8 @@ function App() {
       <div className="App">
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
           <div className="container-fluid">
-            <NavLink className="navbar-brand d-flex align-items-center" to="/">
-              <img src={logo} alt="OctoFit" height="40" className="me-2" />
+            <NavLink className="navbar-brand" to="/">
+              <img src="/octofitapp-small.png" alt="OctoFit" height="30" className="me-2" />
               OctoFit Tracker
             </NavLink>
             <button

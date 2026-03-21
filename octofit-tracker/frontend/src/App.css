@@ -14,4 +14,21 @@ body {
   .display-4 {
     font-size: 2rem;
   }
+.navbar .nav-link.active {
+  font-weight: bold;
+  color: #fff !important;
+  text-decoration: underline;
+}
+
+.container {
+  padding-top: 20px;
+}
+
+h2 {
+  color: #343a40;
+}
+
+.table thead {
+  background-color: #343a40;
+  color: white;
 }
