@@ -17,6 +17,14 @@ router.register(r'teams', views.TeamViewSet)
 router.register(r'activities', views.ActivityViewSet)
 router.register(r'leaderboard', views.LeaderboardViewSet)
 router.register(r'workouts', views.WorkoutViewSet)
+from .views import api_root, UserViewSet, ActivityViewSet, TeamViewSet, LeaderboardViewSet, WorkoutViewSet
+
+router = DefaultRouter()
+router.register(r'users', UserViewSet)
+router.register(r'activities', ActivityViewSet)
+router.register(r'teams', TeamViewSet)
+router.register(r'leaderboard', LeaderboardViewSet)
+router.register(r'workouts', WorkoutViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
